@@ -36,32 +36,38 @@ io.on('connection', (socket) => {
   console.log('A user connected');
 
   socket.on('newGame', () => {
+    console.log('new game pushed')
     targetWord = getRandomWord();
     guesses = [];
     maxGuesses = 6;
     clearInterval(timer);
     timer = startTimer(socket);
     socket.emit('newTarget', targetWord);
+    console.log(`New target word: ${targetWord}`);
     availableCharacters = 'abcdefghijklmnopqrstuvwxyz';
     io.emit('updateGuesses', guesses);
     io.emit('updateCharacters', availableCharacters);
   });
 
   socket.on('guess', (guess) => {
+    console.log('new guess added')
     if (maxGuesses > 0) {
       guess = guess.toLowerCase().trim();
       if (guess.length === 5 && /^[a-z]+$/.test(guess)) {
         if (englishWords.includes(guess)) {
           guesses.push(guess);
+          console.log(guesses)
           maxGuesses--;
+          console.log('new guess added 2')
           availableCharacters = availableCharacters.replace(new RegExp(guess.split('').join('|'), 'g'), '');
           io.emit('updateGuesses', guesses);
           io.emit('updateCharacters', availableCharacters);
+          console.log('new guess added3')
+          clearInterval(timer);
+          timer = startTimer(socket);
           if (guess === targetWord) {
-            clearInterval(timer);
             socket.emit('win');
           } else if (maxGuesses === 0) {
-            clearInterval(timer);
             socket.emit('lose');
           }
         } else {
