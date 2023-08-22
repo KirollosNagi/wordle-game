@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitGuessButton = document.getElementById('submitGuess');
     const guessInput = document.getElementById('guess');
     const resultDiv = document.getElementById('result');
+    const guessesDiv = document.getElementById('guesses');
+    const timerDiv = document.getElementById('timer');
+    const availableCharactersSpan = document.getElementById('availableCharacters');
   
     newGameButton.addEventListener('click', () => {
       socket.emit('newGame');
@@ -20,18 +23,33 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       socket.emit('guess', guess);
+      guessInput.value = '';
     });
   
     socket.on('newTarget', (targetWord) => {
       console.log(`New target word: ${targetWord}`);
+      availableCharactersSpan.textContent = Array.from(targetWord).join(', ');
+    });
+  
+    socket.on('updateGuesses', (guesses) => {
+      const guessList = guesses.map((guess, index) => `<div>${index + 1}. ${guess}</div>`).join('');
+      guessesDiv.innerHTML = guessList;
     });
   
     socket.on('win', () => {
       resultDiv.textContent = 'You win!';
     });
   
-    socket.on('wrongGuess', () => {
-      resultDiv.textContent = 'Wrong guess. Try again.';
+    socket.on('lose', () => {
+      resultDiv.textContent = 'You lose. The word was ' + targetWord;
+    });
+  
+    socket.on('unknownWord', () => {
+      alert('Unknown word. Please enter a valid English word.');
+    });
+  
+    socket.on('updateTimer', (seconds) => {
+      timerDiv.textContent = `Time left: ${seconds} seconds`;
     });
   
     socket.on('disconnect', () => {

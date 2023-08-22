@@ -10,9 +10,12 @@
     <h1>Wordle Game</h1>
     <div id="game">
         <button id="newGame">New Game</button>
+        <p>Available characters: <span id="availableCharacters"></span></p>
         <div id="result"></div>
+        <div id="guesses"></div>
         <input type="text" id="guess" placeholder="Enter your guess">
         <button id="submitGuess">Submit Guess</button>
+        <div id="timer"></div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
