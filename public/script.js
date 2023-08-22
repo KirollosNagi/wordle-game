@@ -40,6 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
       resultDiv.textContent = 'You win!';
     });
   
+    socket.on('updateCharacters', (characters) => {
+        availableCharactersSpan.textContent = characters;
+      });
+      
     socket.on('lose', () => {
       resultDiv.textContent = 'You lose. The word was ' + targetWord;
     });
